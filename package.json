@@ -21,7 +21,9 @@
   "description": "Poky Table Robot Arm",
   "name": "poky",
   "main": "dist/poky.js",
+  "types": "dist/index.d.ts",
   "module": "src/index.js",
+  "license": "MIT",
   "scripts": {
     "build": "webpack --mode=production --node-env=production",
     "build:dev": "webpack --mode=development",

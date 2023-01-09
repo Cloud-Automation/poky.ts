@@ -1,6 +1,6 @@
 import utils from './utils'
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import Robot, { Config as RobotConfig } from './robot'
 import PointerModel, { Config as PointerConfig } from './models/pointer'
 import InvKin from './invkin'
@@ -12,7 +12,8 @@ export type Config = {
     type: 'relative' | 'absolute',
     x: number,
     y: number
-  }
+  },
+  showHelper: boolean
 }
 
 export default class Poky {
@@ -42,7 +43,8 @@ export default class Poky {
           type: 'relative',
           x: 0,
           y: 1
-        }
+        },
+        showHelper: true
       }
     } else {
       this._config = config
@@ -76,7 +78,7 @@ export default class Poky {
     this._animate();
 
 
-    this._initScene();
+    this._initScene(this._config.showHelper);
 
     /* initiate robot */
 
@@ -115,7 +117,7 @@ export default class Poky {
       firstArc: {
         bigRadius: 9,
         smallRadius: 6,
-        length: maxRadius * 1.1,
+        length: 40, //maxRadius * 1.1,
         depth: 4 ,
         socketRadius: 1,
         distance: 8
@@ -123,7 +125,7 @@ export default class Poky {
       nextArcs: [ 
         {
           smallRadius: 4,
-          length: maxRadius * 1.1,
+          length: 40, // maxRadius * 1.1,
         },
         {
           smallRadius: 3,
@@ -137,18 +139,18 @@ export default class Poky {
     this._invkin = new InvKin(this._robot)
 
     // initial position
-    this._robot.angles = [ -1/4 * Math.PI, 1/2 * Math.PI, 0, 0 ]
+    this._robot.angles = [ -1/4 * Math.PI, 1/2 * Math.PI, 1/2 * Math.PI, 1/2 * Math.PI ]
     this._scene.add( this._robot );
 
 
     // setup events
-    this._rootElement.addEventListener('touchstart', this.mouseUpdate.bind(this))
+    /* this._rootElement.addEventListener('touchstart', this.mouseUpdate.bind(this))
     this._rootElement.addEventListener('touchend', this.mouseUpdate.bind(this))
     this._rootElement.addEventListener('touchmove', this.mouseUpdate.bind(this))
 
     this._rootElement.addEventListener('mousedown', this.mouseUpdate.bind(this))
     this._rootElement.addEventListener('mouseup', this.mouseUpdate.bind(this))
-    this._rootElement.addEventListener('mousemove', this.mouseUpdate.bind(this))
+    this._rootElement.addEventListener('mousemove', this.mouseUpdate.bind(this)) */
 
   }
 
@@ -233,10 +235,10 @@ export default class Poky {
 
     if (showHelper) {
 
-      const helperA = new THREE.GridHelper( 160, 100 );
+      /* const helperA = new THREE.GridHelper( 160, 100 );
       helperA.rotation.x = Math.PI / 2;
 
-      this._scene.add(helperA)
+      this._scene.add(helperA) */
 
       const helperB = new THREE.GridHelper( 160, 100 );
       helperB.rotation.y = Math.PI / 2;
@@ -246,12 +248,9 @@ export default class Poky {
       const axesHelper = new THREE.AxesHelper( 100 );
       this._scene.add( axesHelper );
 
-    }
-
-    if (showHelper) {
       const controls = new OrbitControls( this._camera, this._renderer.domElement );
-      controls.minDistance = 10;
-      controls.maxDistance = 1000;
+      controls.update();
+
     }
 
   }
